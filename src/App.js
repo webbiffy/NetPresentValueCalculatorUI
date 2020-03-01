@@ -43,10 +43,14 @@ const errorStyles = {
   color: 'red'
 };
 
+const titleStyles = {
+  textAlign: 'center'
+};
 function App() {
   const classes = useStyles('');
 
   const [netPresentValue, setNetPresentValue] = useState('');
+  const [variableNetPresentValue, setVariableNetPresentValue] = useState({});
 
   const inputLabel = useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
@@ -82,15 +86,19 @@ function App() {
 
   const fetchDataFromAPI = async values => {
     const dataFromAPI = await services(values);
-    setNetPresentValue(dataFromAPI);
+    if (dataFromAPI.natureOfInflow === 'FIXED') {
+      setNetPresentValue(dataFromAPI);
+    } else {
+      setVariableNetPresentValue(dataFromAPI);
+    }
   };
 
   return (
     <>
       <CssBaseline />
       <Container maxWidth='sm'>
-        <h1>Net Present Value Calculator</h1>
-        {netPresentValue !== '' ? <h2>Net Present Value: ₱{netPresentValue}</h2> : ''}
+        <h1 style={titleStyles}>Net Present Value Calculator</h1>
+        {netPresentValue !== '' && formik.natureOfInflow === 'FIXED' ? <h2 style={titleStyles}>Net Present Value: ₱{netPresentValue}</h2> : ''}
         <form onSubmit={formik.handleSubmit} className={classes.root} autoComplete='off'>
           <TextField id='initialInvestment' name='initialInvestment' label='Initial Investment' type='number' variant='outlined' value={formik.values.initialInvestment} onChange={formik.handleChange} />
           {formik.errors.initialInvestment && formik.touched.initialInvestment ? <div style={errorStyles}>{'* ' + formik.errors.initialInvestment}</div> : null}
