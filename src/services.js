@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const services = values => {
+  values = JSON.stringify(values);
   const data = axios
-    .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+    .post('/temporary/endpoint')
     .then(function(response) {
-      return 1500;
+      return response;
     })
     .catch(function(error) {
       return error;
