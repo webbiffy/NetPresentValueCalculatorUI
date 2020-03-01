@@ -12,7 +12,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import { useFormik } from 'formik';
 import services from './services';
 import * as Yup from 'yup';
@@ -43,6 +42,9 @@ const errorStyles = {
   color: 'red'
 };
 
+const titleStyles = {
+  textAlign: 'center'
+};
 function App() {
   const classes = useStyles('');
 
@@ -89,8 +91,8 @@ function App() {
     <>
       <CssBaseline />
       <Container maxWidth='sm'>
-        <h1>Net Present Value Calculator</h1>
-        {netPresentValue !== '' ? <h2>Net Present Value: ₱{netPresentValue}</h2> : ''}
+        <h1 style={titleStyles}>Net Present Value Calculator</h1>
+        {netPresentValue !== '' ? <h2 style={titleStyles}>Net Present Value: ₱{netPresentValue}</h2> : ''}
         <form onSubmit={formik.handleSubmit} className={classes.root} autoComplete='off'>
           <TextField id='initialInvestment' name='initialInvestment' label='Initial Investment' type='number' variant='outlined' value={formik.values.initialInvestment} onChange={formik.handleChange} />
           {formik.errors.initialInvestment && formik.touched.initialInvestment ? <div style={errorStyles}>{'* ' + formik.errors.initialInvestment}</div> : null}
@@ -127,11 +129,11 @@ function App() {
               <TextField id='incrementRate' name='incrementRate' label='Increment Rate' type='number' variant='outlined' value={formik.values.incrementRate} onChange={formik.handleChange} />
 
               {_.range(1, formik.values.selectYears + 1).map(value => (
-                <TextField key={value} id={`yearCashFlow[${value - 1}]`} name={`yearCashFlow[${value - 1}]`} label={'Year ' + value + ' Cash Flow'} type='number' variant='outlined' value={formik.values.yearCashFlow[value - 1]} onChange={formik.handleChange} />
+                <TextField key={value} id={`yearCashFlow[${value}]`} name={`yearCashFlow[${value}]`} label={'Year ' + value + ' Cash Flow'} type='number' variant='outlined' value={formik.values.yearCashFlow[value]} onChange={formik.handleChange} />
               ))}
             </div>
           ) : (
-            <TextField id={`yearCashFlow[0]`} name={`yearCashFlow[0]`} label={'Cash Flow'} type='number' variant='outlined' value={formik.values.yearCashFlow[0]} onChange={formik.handleChange} />
+            <TextField id={`yearCashFlow[1]`} name={`yearCashFlow[1]`} label={'Cash Flow'} type='number' variant='outlined' value={formik.values.yearCashFlow[1]} onChange={formik.handleChange} />
           )}
 
           <Grid container spacing={3}>
