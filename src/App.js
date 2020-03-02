@@ -48,10 +48,11 @@ const titleStyles = {
 function App() {
   const classes = useStyles('');
 
-  const [netPresentValue, setNetPresentValue] = useState('');
+  const [netPresentValue, setNetPresentValue] = useState(0);
 
   const inputLabel = useRef(null);
   const [labelWidth, setLabelWidth] = useState(0);
+  const [mapYearCashFlow, setMapYearCashFlow] = useState({ Year: 1, cash: 0 });
 
   React.useEffect(() => {
     setLabelWidth(inputLabel.current.offsetWidth);
@@ -59,28 +60,40 @@ function App() {
 
   const formik = useFormik({
     initialValues: {
-      initialInvestment: '',
-      discountRate: '',
+      Id: '',
+      initialInvestment: 0,
+      discountRate: 0,
       selectYears: 1,
       natureOfInflow: 'FIXED',
-      lowerBound: '',
-      upperBound: '',
-      incrementRate: '',
-      yearCashFlow: {}
+      lowerBound: 0,
+      upperBound: 0,
+      incrementRate: 0,
+      yearCashFlow: {},
+      mappedYearCashFlow: {
+        Year: mapYearCashFlow.Year,
+        cash: mapYearCashFlow.cash
+      },
+      netPresentValueFormik: netPresentValue
     },
     validationSchema: Yup.object().shape({
-      // initialInvestment: Yup.mixed()
-      //   .required('Field must not be empty')
-      //   .test(),
-      // initialInvestment: Yup.string().required('Field must not be empty'),
-      // initialInvestment: Yup.number().min(1, 'It must be a positive, non-zero number'),
       discountRate: Yup.string().required('Field must not be empty')
     }),
 
     onSubmit: values => {
+      mappingYearCashFlow(values);
       fetchDataFromAPI(values);
     }
   });
+
+  const mappingYearCashFlow = values => {
+    let keys = Object.keys(values.yearCashFlow);
+    let cashValues = Object.values(values.yearCashFlow);
+
+    setMapYearCashFlow({
+      Year: keys,
+      cash: cashValues
+    });
+  };
 
   const fetchDataFromAPI = async values => {
     const dataFromAPI = await services(values);
@@ -92,7 +105,7 @@ function App() {
       <CssBaseline />
       <Container maxWidth='sm'>
         <h1 style={titleStyles}>Net Present Value Calculator</h1>
-        {netPresentValue !== '' ? <h2 style={titleStyles}>Net Present Value: ₱{netPresentValue}</h2> : ''}
+        {netPresentValue !== 0 ? <h2 style={titleStyles}>Net Present Value: ₱{netPresentValue}</h2> : ''}
         <form onSubmit={formik.handleSubmit} className={classes.root} autoComplete='off'>
           <TextField id='initialInvestment' name='initialInvestment' label='Initial Investment' type='number' variant='outlined' value={formik.values.initialInvestment} onChange={formik.handleChange} />
           {formik.errors.initialInvestment && formik.touched.initialInvestment ? <div style={errorStyles}>{'* ' + formik.errors.initialInvestment}</div> : null}
